@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title> BhavCopy for {{ date }}</title>
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/ju-1.11.4/jqc-1.11.3,dt-1.10.8/datatables.min.css"/>
+		<script type="text/javascript" src="https://cdn.datatables.net/r/ju-1.11.4/jqc-1.11.3,dt-1.10.8/datatables.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				$('#example').dataTable();
+			} );
+		</script>
+	</head>
+	<body>
+		<div class="container">
+
+<h1 style="color:#1c94c4;font-family:verdina">Top 10 stocks for {{date}}</h1>
+<table id="example" class="display" style="width:100%">
+<thead><tr><th>Code</th><th>Script_Name</th><th>Open</th><th>High</th><th>Low</th><th>Close</th>
+</tr>
+</thead>
+<tbody>
+	{% for item in top_10_stocks %}
+<tr>
+<td>{{item.SC_CODE}}</td>
+<td>{{item.SC_NAME}}</td>
+<td>{{item.OPEN}}</td>
+<td>{{item.HIGH}}</td>
+<td>{{item.LOW}}</td>
+<td>{{item.CLOSE}}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+    <h3 style="color:#1c94c4;font-family:verdina">Search for Stock by Name</h3>
+    <form method="get" action="stock_search">
+      <input
+        type="search"
+        name="stock_search_string"
+        placeholder="Ex.RELIANCE"
+        name="stock_search_string"
+      />
+      <button type="submit">Search by Stock Name</button>
+    </form>
+
+    <h3 style="color:#1c94c4;font-family:verdina">Get BhavCopy for Date</h3>
+    <form method="get" action="BhavCopy_for_date">
+      <input type="text" value="" placeholder="Ex.2019-12-14" name="date_string" />
+
+
+      <button type="submit">Run</button>
+
+    </form>
+			
+		</div>
+	</body>
+</html>
