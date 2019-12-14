@@ -9,7 +9,7 @@ jaraco.text==3.2.0
 more-itertools==8.0.2
 portend==2.6
 pytz==2019.3
-pywin32==227
+pywin32==223
 redis==3.3.11
 six==1.13.0
 tempora==1.14.1
