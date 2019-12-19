@@ -1,7 +1,6 @@
-import redis
 from BhavCopy import redis_connection
 
-def get_top_10_stocks_by_code_and_date(r: redis.connection): 
+def get_top_10_stocks_by_code_and_date(r): 
     """
     This function returns the top ten stocks ( according to code ) from redis.
     return: top_10_stocks: list of top ten stocks with their Open, High, Low, Close
@@ -19,7 +18,7 @@ def get_top_10_stocks_by_code_and_date(r: redis.connection):
     return top_10_stocks, date_of_bhavcopy
 
 
-def search_by_name(r : redis,name) -> list:
+def search_by_name(r,name) -> list:
     """
     This function returns a list of stocks that match with the given string. (Substring search)
     return: The list of stocks which have the given string as a substin in them.
