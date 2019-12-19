@@ -1,4 +1,5 @@
 import redis
+from BhavCopy import redis_connection
 
 def get_top_10_stocks_by_code_and_date(r: redis.connection): 
     """
@@ -12,8 +13,9 @@ def get_top_10_stocks_by_code_and_date(r: redis.connection):
         if key != "date":
             data.append(r.hgetall(key))
         else:   date_of_bhavcopy = r.get(key)
-    top_10_stocks = sorted(data, key=lambda item: item["SC_CODE"])[0:10]
-
+        
+    top_10_stocks = sorted(data, key=lambda item: item["OPEN"])[0:10]
+    print(top_10_stocks[0:3])
     return top_10_stocks, date_of_bhavcopy
 
 
@@ -32,8 +34,6 @@ def search_by_name(r : redis,name) -> list:
 
 
 if __name__ == "__main__":
-    r = redis.StrictRedis(
-        host="127.0.0.1", port=6379, db=0, decode_responses=True
-    )
+    r = redis_connection()
     stocks, date = get_top_10_stocks_by_code_and_date(r)
     search_data = search_by_name(r, "REL")

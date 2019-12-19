@@ -1,7 +1,7 @@
 import datetime
 import cherrypy
-import redis
-from BhavCopy import Bhavcopy_bse_downloader
+import os
+from BhavCopy import Bhavcopy_bse_downloader,redis_connection
 from Models import search_by_name, get_top_10_stocks_by_code_and_date
 
 from jinja2 import Environment, FileSystemLoader
@@ -13,13 +13,16 @@ class Top_10_Stocks(object):
 
     @cherrypy.expose
     def index(self):
-        """
-        This is the index route that shows top 10 stocks
-        """
-        r = redis.StrictRedis(host="127.0.0.1",port=6379,decode_responses=True)
-        top_10_stocks, date = get_top_10_stocks_by_code_and_date(r=r)
+#        """
+#        This is the index route that shows top 10 stocks
+#        """
+        r = redis_connection()
+        top_10_stocks, date = get_top_10_stocks_by_code_and_date(r)
+#        print("date",date)
         tmpl = env.get_template("top_10_stocks.html")
         return tmpl.render(top_10_stocks=top_10_stocks, date=date)
+        
+        
 
     @cherrypy.expose
     def BhavCopy_for_date(self, date_string):
@@ -29,7 +32,7 @@ class Top_10_Stocks(object):
         """
         date_obj = datetime.datetime.strptime(date_string, "%Y-%m-%d").date()
         records = Bhavcopy_bse_downloader(date=date_obj)
-        r = redis.StrictRedis(host="127.0.0.1",port=6379,decode_responses=True)
+        r = redis_connection()
         if len(records)>0:
             for record in records:
                 r.hmset(record["SC_NAME"], record)
@@ -44,12 +47,19 @@ class Top_10_Stocks(object):
         This is the search route for matching the given string with the list of stocks present in the database.
         return: html template
         """
-        r = redis.StrictRedis(host="127.0.0.1",port=6379,decode_responses=True)
+        r = redis_connection()
         stocks = search_by_name(r, name=stock_search_string)
         tmpl = env.get_template("stock_search.html")
         date = r.get("date")
         return tmpl.render(stocks=stocks, stock_search_string=stock_search_string, date=date)
+    
+config = {
+    'global': {
+        'server.socket_host': '0.0.0.0',
+        'server.socket_port': int(os.environ.get('PORT', 5000))
+    }
+}
 
 
 if __name__ == "__main__":
-    cherrypy.quickstart(Top_10_Stocks())
+    cherrypy.quickstart(Top_10_Stocks(),'/',config=config)

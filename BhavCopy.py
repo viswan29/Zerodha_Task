@@ -13,6 +13,13 @@ def read_local(file_path):
     records = csv.DictReader(open(file_path))
     return list(records)
 
+def redis_connection():
+    redis_host = '0.0.0.0'
+    redis_port = int(os.environ.get('PORT'))
+    redis_password = None
+    r = redis.StrictRedis(host=redis_host, port=redis_port, password=redis_password, decode_responses=True)
+    return r 
+
 def Bhavcopy_bse_downloader(date):
     date_string = date.strftime("%d%m%y")
     
@@ -36,13 +43,10 @@ def Bhavcopy_bse_downloader(date):
 if __name__ == "__main__":
 
     records = Bhavcopy_bse_downloader(
-        date=datetime.datetime.utcnow().date() - datetime.timedelta(days=2)
+        date=datetime.datetime.utcnow().date() - datetime.timedelta(days=4)
     )
-    r = redis.StrictRedis(
-        host="127.0.0.1", port=6379, db=0, decode_responses=True
-    )
+    r = redis_connection()
     for record in records:
         r.hmset(record["SC_NAME"], record)
-        r.hmset(record["SC_CODE"], record)
 
     
